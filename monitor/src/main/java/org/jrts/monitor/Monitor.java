@@ -11,10 +11,10 @@ public class Monitor {
         monitorHandler = handler;
     }
 
-    public static void monitorMethodOnCallBefore(final String classname) throws Throwable {
+    public static void monitorMethodOnCallBefore(final Class clazz) throws Throwable {
         try {
             if (null != monitorHandler) {
-                monitorHandler.handleOnCallBefore(classname);
+                monitorHandler.handleOnCallBefore(clazz);
             }
         } catch (Throwable cause) {
             handleException(cause);
@@ -22,20 +22,20 @@ public class Monitor {
     }
 
 
-    public static void monitorMethodOnBefore(final String methodClassName, final Object target) throws Throwable {
+    public static void monitorMethodOnBefore(final Class methodClass, final Object target) throws Throwable {
         try {
             if (null != monitorHandler) {
-                monitorHandler.handleOnBefore(methodClassName, target == null ? "null" : target.getClass().getName());
+                monitorHandler.handleOnBefore(methodClass, target);
             }
         } catch (Throwable cause) {
             handleException(cause);
         }
     }
 
-    public static void monitorMethodOnStaticAccess(String ownerClassName, String fieldClassName) throws Throwable {
+    public static void monitorMethodOnStaticAccess(Class ownerClass, Class fieldClass) throws Throwable {
         try {
             if (null != monitorHandler) {
-                monitorHandler.handleOnStaticAccess(ownerClassName, fieldClassName);
+                monitorHandler.handleOnStaticAccess(ownerClass, fieldClass);
             }
         } catch (Throwable cause) {
             handleException(cause);

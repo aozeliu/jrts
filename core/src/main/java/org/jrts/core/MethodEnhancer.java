@@ -46,11 +46,16 @@ public class MethodEnhancer extends AdviceAdapter {
 
     @Override
     public void visitFieldInsn(int opcode, String owner, String name, String descriptor) {
-        if(opcode == GETSTATIC || opcode == PUTSTATIC) {
+        if(Types.isClassType(descriptor) && (opcode == GETSTATIC || opcode == PUTSTATIC)){
             String ownerClassname = Types.getClassnameFromInternalName(owner);
             String fieldClassname = Types.getClassnameFromDescriptor(descriptor);
-            if(!Types.isIgnorableClass(ownerClassname)
-                    || !Types.isIgnorableClass(fieldClassname)){
+            if(Types.isIgnorableClass(ownerClassname)){
+                ownerClassname = null;
+            }
+            if (Types.isIgnorableClass(fieldClassname)) {
+                fieldClassname = null;
+            }
+            if(ownerClassname != null || fieldClassname != null) {
                 insertMonitorMethodOnStaticAccess(ownerClassname, fieldClassname);
             }
         }
@@ -60,12 +65,12 @@ public class MethodEnhancer extends AdviceAdapter {
 
     private void insertMonitorMethodOnBefore(){
         try {
-            push(classname);
+            push(Type.getType(Types.getDescriptorFromClassname(classname)));
             loadThisOrPushNullIfIsStatic();
             invokeStatic(Type.getType(Monitor.class),
                     Method.getMethod(
                             Monitor.class.getDeclaredMethod(
-                                    "monitorMethodOnBefore", String.class, Object.class)));
+                                    "monitorMethodOnBefore", Class.class, Object.class)));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -73,11 +78,11 @@ public class MethodEnhancer extends AdviceAdapter {
 
     private void insertMonitorMethodOnCallBefore(String classname){
         try {
-            push(classname);
+            push(Type.getType(Types.getDescriptorFromClassname(classname)));
             invokeStatic(Type.getType(Monitor.class),
                     Method.getMethod(
                             Monitor.class.getDeclaredMethod(
-                                    "monitorMethodOnCallBefore", String.class)));
+                                    "monitorMethodOnCallBefore", Class.class)));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -85,12 +90,13 @@ public class MethodEnhancer extends AdviceAdapter {
 
     private void insertMonitorMethodOnStaticAccess(String ownerClassname, String fieldClassName){
         try {
-            push(ownerClassname);
-            push(fieldClassName);
+
+            push(ownerClassname == null ? null : Type.getType(Types.getDescriptorFromClassname(ownerClassname)));
+            push(fieldClassName == null ? null : Type.getType(Types.getDescriptorFromClassname(fieldClassName)));
             invokeStatic(Type.getType(Monitor.class),
                     Method.getMethod(
                             Monitor.class.getDeclaredMethod(
-                                    "monitorMethodOnStaticAccess", String.class, String.class)));
+                                    "monitorMethodOnStaticAccess", Class.class, Class.class)));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }

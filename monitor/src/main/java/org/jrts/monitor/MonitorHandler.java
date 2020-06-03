@@ -8,25 +8,25 @@ public interface MonitorHandler {
     /**
      * 调用之前
      *
-     * @param classname      调用方法时所在的类
+     * @param clazz      调用方法时所在的类
      */
-    void handleOnCallBefore(String classname) throws Throwable;
+    void handleOnCallBefore(Class clazz) throws Throwable;
 
 
     /**
      * 执行之前
      *
-     * @param methodClassName             执行方法所在类名
-     * @param targetClassname                    目标对象实例
+     * @param methodClass             执行方法所在类
+     * @param target                   目标对象
      */
-    void handleOnBefore(String methodClassName, String targetClassname) throws Throwable;
+    void handleOnBefore(Class methodClass, Object target) throws Throwable;
 
 
     /**
      * 访问静态变量
      *
-     * @param ownerClassName             静态变量所在类
-     * @param fieldClassName            静态变量类型
+     * @param ownerClass             静态变量所在类
+     * @param fieldClass            静态变量类型
      */
-    void handleOnStaticAccess(String ownerClassName, String fieldClassName) throws Throwable;
+    void handleOnStaticAccess(Class ownerClass, Class fieldClass) throws Throwable;
 }

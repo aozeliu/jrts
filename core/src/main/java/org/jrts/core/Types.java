@@ -15,11 +15,23 @@ public class Types {
                 || className.startsWith("org.jrts.", 0));
     }
 
+    public static boolean isClassType(String descriptor) {
+        return descriptor.startsWith("L");
+    }
+
     public static String getClassnameFromInternalName(String internalName){
         return internalName.replace("/", ".");
     }
 
     public static String getClassnameFromDescriptor(String descriptor){
         return Type.getType(descriptor).getClassName();
+    }
+
+    public static String getDescriptorFromClassname(String classname){
+        if(classname == null){
+            return null;
+        }else{
+            return "L" + classname.replace(".", "/") + ";";
+        }
     }
 }

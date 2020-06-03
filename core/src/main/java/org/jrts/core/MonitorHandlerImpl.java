@@ -9,19 +9,21 @@ public class MonitorHandlerImpl implements MonitorHandler {
     private static final Logger logger = LoggerFactory.getLogger(MonitorHandlerImpl.class);
 
     @Override
-    public void handleOnCallBefore(String classname) throws Throwable {
-        logger.info("handleOnCallBefore classname={}", classname);
+    public void handleOnCallBefore(Class clazz) throws Throwable {
+        logger.info("handleOnCallBefore classname={}", clazz.getName());
     }
 
     @Override
-    public void handleOnBefore(String methodClassName, String targetClassname) throws Throwable {
+    public void handleOnBefore(Class methodClass, Object target) throws Throwable {
         logger.info("handleOnBefore methodClassName={}, targetClassname={}",
-                methodClassName, targetClassname);
+                methodClass.getName(), target == null ? "null" : target.getClass().getName());
     }
 
 
     @Override
-    public void handleOnStaticAccess(String ownerClassName, String fieldClassName) throws Throwable {
-        logger.info("handleOnStaticAccess ownerClassName={}, fieldClassName={}", ownerClassName, fieldClassName);
+    public void handleOnStaticAccess(Class ownerClass, Class fieldClass) throws Throwable {
+        logger.info("handleOnStaticAccess ownerClassName={}, fieldClassName={}",
+                ownerClass == null ? "null" : ownerClass.getName(),
+                fieldClass == null ? "null" : fieldClass.getName());
     }
 }
