@@ -32,7 +32,7 @@ public class EnhancerImpl implements Enhancer{
         if (!isDumpClass) {
             return data;
         }
-        final File dumpClassFile = new File("./jrts-class-dump/" + className + ".class");
+        final File dumpClassFile = new File("./jrts/class-dump/" + className + ".class");
         final File classPath = new File(dumpClassFile.getParent());
 
         // 创建类所在的包路径

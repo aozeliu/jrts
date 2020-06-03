@@ -6,6 +6,10 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AdviceAdapter;
 import org.objectweb.asm.commons.Method;
 
+
+/**
+ * TODO 减少插桩点
+ */
 public class MethodEnhancer extends AdviceAdapter {
 
     private String classname;
@@ -35,7 +39,7 @@ public class MethodEnhancer extends AdviceAdapter {
 
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String descriptor, boolean isInterface) {
-        if(opcode == INVOKEINTERFACE || opcode == INVOKEVIRTUAL) {
+        if(!Types.isArrayType(owner) && (opcode == INVOKEINTERFACE || opcode == INVOKEVIRTUAL)){
             String ownerClassname = Types.getClassnameFromInternalName(owner);
             if(!Types.isIgnorableClass(ownerClassname)) {
                 insertMonitorMethodOnCallBefore(ownerClassname);

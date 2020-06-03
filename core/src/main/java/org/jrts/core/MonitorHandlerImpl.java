@@ -4,26 +4,86 @@ import org.jrts.monitor.MonitorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.URL;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class MonitorHandlerImpl implements MonitorHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(MonitorHandlerImpl.class);
 
+    private Hasher hasher = new Hasher();
+    private Map<String, String> hashes = new ConcurrentHashMap<>();
+
     @Override
     public void handleOnCallBefore(Class clazz) throws Throwable {
-        logger.info("handleOnCallBefore classname={}", clazz.getName());
+        String hash = getHash(clazz);
+        logger.info("handleOnCallBefore classname={} hashcode={}",
+                clazz.getName(), hash);
     }
 
     @Override
     public void handleOnBefore(Class methodClass, Object target) throws Throwable {
-        logger.info("handleOnBefore methodClassName={}, targetClassname={}",
-                methodClass.getName(), target == null ? "null" : target.getClass().getName());
+        Class targetClazz = target == null ? null : target.getClass();
+        String methodClassHash = getHash(methodClass);
+        String targetClassHash = getHash(targetClazz);
+        logger.info("handleOnBefore methodClassName={} hashcode={}, targetClassname={}, hashcode={}",
+                methodClass.getName(),
+                methodClassHash,
+                targetClazz == null ? "null" : targetClazz.getName(),
+                targetClassHash
+        );
     }
 
 
     @Override
     public void handleOnStaticAccess(Class ownerClass, Class fieldClass) throws Throwable {
-        logger.info("handleOnStaticAccess ownerClassName={}, fieldClassName={}",
+        String ownerClassHash = getHash(ownerClass);
+        String fieldClassHash = getHash(fieldClass);
+        logger.info("handleOnStaticAccess ownerClassName={} hashcode={}, fieldClassName={} hashcode={}",
                 ownerClass == null ? "null" : ownerClass.getName(),
-                fieldClass == null ? "null" : fieldClass.getName());
+                ownerClassHash,
+                fieldClass == null ? "null" : fieldClass.getName(),
+                fieldClassHash);
+    }
+
+    public void store(){
+        File file = new File(".jrts/jrts.dpi");
+        File parent = file.getParentFile();
+        if(parent != null && !parent.exists() && !parent.mkdirs()){
+            logger.warn("存储依赖信息失败：无法创建依赖信息目录");
+        }
+        try(PrintWriter writer = new PrintWriter(file)){
+            for (Map.Entry<String, String> entry: hashes.entrySet()) {
+                writer.println(entry.getKey() + "=" + entry.getValue());
+            }
+        }catch (IOException e){
+            e.printStackTrace();;
+        }
+    }
+
+    public URL getUrlForClass(Class clazz){
+        String fileName = clazz.getSimpleName().concat(".class");
+        return clazz.getResource(fileName);
+    }
+
+    public String getHash(Class clazz){
+        if(clazz == null){
+            return hasher.hash(null);
+        }
+        URL url = getUrlForClass(clazz);
+        if(url == null){
+            return hasher.hash(null);
+        }
+        String externalForm = url.toExternalForm();
+        String hash = hashes.get(externalForm);
+        if(hash == null) {
+            hash = hasher.hash(url);
+            hashes.put(externalForm, hash);
+        }
+        return hash;
     }
 }

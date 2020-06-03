@@ -19,6 +19,10 @@ public class Types {
         return descriptor.startsWith("L");
     }
 
+    public static boolean isArrayType(String descriptor){
+        return descriptor.startsWith("[");
+    }
+
     public static String getClassnameFromInternalName(String internalName){
         return internalName.replace("/", ".");
     }

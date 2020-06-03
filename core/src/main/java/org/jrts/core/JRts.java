@@ -13,7 +13,14 @@ public class JRts {
     }
 
     public void start(){
-        Monitor.init(new MonitorHandlerImpl());
+        MonitorHandlerImpl monitorHandler = new MonitorHandlerImpl();
+        Monitor.init(monitorHandler);
         instrumentation.addTransformer(new JRtsClassFileTransformer(), true);
+        Runtime.getRuntime().addShutdownHook(new Thread(){
+            @Override
+            public void run() {
+                monitorHandler.store();
+            }
+        });
     }
 }
