@@ -1,17 +1,20 @@
 package org.example;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class ServiceImpl extends BaseService {
 
     String msg;
 
     public ServiceImpl(String msg) {
         this.msg = msg;
-        System.out.println("constructor");
+        log.info("constructor");
     }
 
 
     @Override
     public void say() {
-        System.out.println(msg);
+        log.info(msg);
     }
 }
