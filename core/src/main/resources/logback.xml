@@ -1,14 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration scan="true" scanPeriod="10000">
 
-    <appender name="STDOUT-APPENDER" class="ch.qos.logback.core.ConsoleAppender">
+    <!--<appender name="STDOUT-APPENDER" class="ch.qos.logback.core.ConsoleAppender">-->
+        <!--<encoder>-->
+            <!--<pattern>%5level %msg%n</pattern>　　-->
+        <!--</encoder>-->
+    <!--</appender>-->
+
+
+    <appender name="JRTS-FILE-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>.jrts/logs/jrts.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>.jrts/logs/jrts-%d{yyyy-MM-dd}.log</FileNamePattern>
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
         <encoder>
-            <pattern>%5level %msg%n</pattern>　　
+            <pattern>%level %msg%n</pattern>
+            <charset>UTF-8</charset>
         </encoder>
     </appender>
 
     <root level="debug">
-        <appender-ref ref="STDOUT-APPENDER"/>
+        <appender-ref ref="JRTS-FILE-APPENDER"/>
     </root>
 
 </configuration>

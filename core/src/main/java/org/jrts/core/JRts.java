@@ -1,10 +1,14 @@
 package org.jrts.core;
 
 import org.jrts.monitor.Monitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.instrument.Instrumentation;
 
 public class JRts {
+
+    private static final Logger logger = LoggerFactory.getLogger(JRts.class);
 
     private Instrumentation instrumentation;
 
@@ -13,14 +17,22 @@ public class JRts {
     }
 
     public void start(){
-        MonitorHandlerImpl monitorHandler = new MonitorHandlerImpl();
-        Monitor.init(monitorHandler);
-        instrumentation.addTransformer(new JRtsClassFileTransformer(), true);
-        Runtime.getRuntime().addShutdownHook(new Thread(){
-            @Override
-            public void run() {
-                monitorHandler.store();
-            }
-        });
+        Hasher hasher = new Hasher();
+        Checker checker = new Checker(hasher);
+        Storer storer = new Storer();
+        boolean check = checker.check(storer.load());
+        logger.info("check result : {}", check);
+        if(check) {
+            MonitorHandlerImpl monitorHandler = new MonitorHandlerImpl(hasher);
+            Monitor.init(monitorHandler);
+            monitorHandler.beginMonitor();
+            instrumentation.addTransformer(new JRtsClassFileTransformer(), true);
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                @Override
+                public void run() {
+                    storer.dump(monitorHandler.endMonitor());
+                }
+            });
+        }
     }
 }

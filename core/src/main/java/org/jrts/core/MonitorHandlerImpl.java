@@ -4,9 +4,7 @@ import org.jrts.monitor.MonitorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+
 import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,8 +13,12 @@ public class MonitorHandlerImpl implements MonitorHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(MonitorHandlerImpl.class);
 
-    private Hasher hasher = new Hasher();
+    private Hasher hasher;
     private Map<String, String> hashes = new ConcurrentHashMap<>();
+
+    public MonitorHandlerImpl(Hasher hasher) {
+        this.hasher = hasher;
+    }
 
     @Override
     public void handleOnCallBefore(Class clazz) throws Throwable {
@@ -50,21 +52,6 @@ public class MonitorHandlerImpl implements MonitorHandler {
                 fieldClassHash);
     }
 
-    public void store(){
-        File file = new File(".jrts/jrts.dpi");
-        File parent = file.getParentFile();
-        if(parent != null && !parent.exists() && !parent.mkdirs()){
-            logger.warn("存储依赖信息失败：无法创建依赖信息目录");
-        }
-        try(PrintWriter writer = new PrintWriter(file)){
-            for (Map.Entry<String, String> entry: hashes.entrySet()) {
-                writer.println(entry.getKey() + "=" + entry.getValue());
-            }
-        }catch (IOException e){
-            e.printStackTrace();;
-        }
-    }
-
     public URL getUrlForClass(Class clazz){
         String fileName = clazz.getSimpleName().concat(".class");
         return clazz.getResource(fileName);
@@ -85,5 +72,13 @@ public class MonitorHandlerImpl implements MonitorHandler {
             hashes.put(externalForm, hash);
         }
         return hash;
+    }
+
+    public void beginMonitor(){
+        hashes.clear();
+    }
+
+    public Map<String, String> endMonitor(){
+        return hashes;
     }
 }
