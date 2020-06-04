@@ -53,7 +53,13 @@ public class MonitorHandlerImpl implements MonitorHandler {
     }
 
     public URL getUrlForClass(Class clazz){
-        String fileName = clazz.getSimpleName().concat(".class");
+        String classname = clazz.getName();
+        int index = classname.lastIndexOf('.');
+        String fileName = clazz.getSimpleName();
+        if(index != -1){
+            fileName = classname.substring(index+1);
+        }
+        fileName = fileName.concat(".class");
         return clazz.getResource(fileName);
     }
 
