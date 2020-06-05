@@ -1,17 +1,16 @@
 package org.jrts.core.enhance;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 
+@Slf4j
 public class EnhancerImpl implements Enhancer {
 
-    private static final Logger logger = LoggerFactory.getLogger(EnhancerImpl.class);
 
     @Override
     public byte[] transform(String classname, byte[] srcByteCodeArray) {
@@ -38,16 +37,16 @@ public class EnhancerImpl implements Enhancer {
         // 创建类所在的包路径
         if (!classPath.mkdirs()
                 && !classPath.exists()) {
-            logger.warn("create dump classpath={} failed.", classPath);
+            log.warn("create dump classpath={} failed.", classPath);
             return data;
         }
 
         // 将类字节码写入文件
         try {
             FileUtils.writeByteArrayToFile(dumpClassFile, data);
-            logger.info("dump {} to {} success.", className, dumpClassFile);
+            log.info("dump {} to {} success.", className, dumpClassFile);
         } catch (IOException e) {
-            logger.warn("dump {} to {} failed.", className, dumpClassFile, e);
+            log.warn("dump {} to {} failed.", className, dumpClassFile, e);
         }
 
         return data;

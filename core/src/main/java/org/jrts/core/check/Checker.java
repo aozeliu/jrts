@@ -1,10 +1,14 @@
 package org.jrts.core.check;
 
 import org.jrts.core.hash.Hasher;
+import org.jrts.core.store.TestDependency;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+
 
 public class Checker {
 
@@ -13,8 +17,6 @@ public class Checker {
     public Checker(Hasher hasher) {
         this.hasher = hasher;
     }
-
-
 
     /**
      *
@@ -38,6 +40,46 @@ public class Checker {
             }
         }
         return false;
+    }
+
+    public boolean check(TestDependency testDependency){
+        return check(testDependency.getDependencies());
+    }
+
+    /**
+     * 检查哪些测试被影响了
+     * @param list 测试及其依赖信息
+     * @return 被影响的测试名称列表
+     */
+    public List<String> checkAffected(List<TestDependency> list){
+        if(list == null){
+            return null;
+        }
+        ArrayList<String> affected = new ArrayList<>();
+        list.forEach(t -> {
+            if(check(t)){
+                affected.add(t.getTest());
+            }
+        });
+        return affected;
+    }
+
+    /**
+     * 检查哪些测试没有被影响
+     * @param list 测试及其依赖信息
+     * @return 没被影响的测试名称列表
+     */
+    public List<String> checkNonAffected(List<TestDependency> list){
+        if(list == null){
+            return null;
+        }
+        ArrayList<String> nonAffected = new ArrayList<>();
+        list.forEach(t -> {
+            if(!check(t)){
+                nonAffected.add(t.getTest());
+            }
+        });
+        return nonAffected;
     }
 
 }
