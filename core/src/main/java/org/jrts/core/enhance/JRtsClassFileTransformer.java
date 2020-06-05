@@ -1,4 +1,6 @@
-package org.jrts.core;
+package org.jrts.core.enhance;
+
+import org.jrts.core.util.Types;
 
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;

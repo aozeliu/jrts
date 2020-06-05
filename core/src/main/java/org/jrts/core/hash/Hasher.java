@@ -1,4 +1,4 @@
-package org.jrts.core;
+package org.jrts.core.hash;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

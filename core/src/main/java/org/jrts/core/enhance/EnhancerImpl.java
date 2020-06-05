@@ -1,4 +1,4 @@
-package org.jrts.core;
+package org.jrts.core.enhance;
 
 import org.apache.commons.io.FileUtils;
 import org.objectweb.asm.ClassReader;
@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 
-public class EnhancerImpl implements Enhancer{
+public class EnhancerImpl implements Enhancer {
 
     private static final Logger logger = LoggerFactory.getLogger(EnhancerImpl.class);
 

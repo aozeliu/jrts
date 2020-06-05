@@ -1,4 +1,6 @@
-package org.jrts.core;
+package org.jrts.core.check;
+
+import org.jrts.core.hash.Hasher;
 
 import java.net.MalformedURLException;
 import java.net.URL;

@@ -1,5 +1,6 @@
-package org.jrts.core;
+package org.jrts.core.enhance;
 
+import org.jrts.core.util.Types;
 import org.jrts.monitor.Monitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;

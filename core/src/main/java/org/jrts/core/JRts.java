@@ -1,5 +1,10 @@
 package org.jrts.core;
 
+import org.jrts.core.check.Checker;
+import org.jrts.core.enhance.JRtsClassFileTransformer;
+import org.jrts.core.handler.MonitorHandlerImpl;
+import org.jrts.core.hash.Hasher;
+import org.jrts.core.store.Storer;
 import org.jrts.monitor.Monitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

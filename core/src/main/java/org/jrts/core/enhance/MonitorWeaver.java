@@ -1,5 +1,6 @@
-package org.jrts.core;
+package org.jrts.core.enhance;
 
+import org.jrts.core.enhance.MethodEnhancer;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;

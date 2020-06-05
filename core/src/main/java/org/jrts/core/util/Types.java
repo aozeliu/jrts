@@ -1,4 +1,4 @@
-package org.jrts.core;
+package org.jrts.core.util;
 
 import org.objectweb.asm.Type;
 

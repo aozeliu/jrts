@@ -1,5 +1,6 @@
-package org.jrts.core;
+package org.jrts.core.handler;
 
+import org.jrts.core.hash.Hasher;
 import org.jrts.monitor.MonitorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
