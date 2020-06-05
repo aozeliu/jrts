@@ -5,13 +5,17 @@ import org.objectweb.asm.Type;
 public class Types {
 
     public static boolean isIgnorableClass(String className) {
-        return (className.startsWith("java.", 0)
+        return (className.contains("$Proxy")
+                || className.startsWith("java.", 0)
                 || className.startsWith("javax.", 0)
                 || className.startsWith("jdk.", 0)
                 || className.startsWith("sun.", 0)
                 || className.startsWith("com.sun.", 0)
-                || className.startsWith("com.intellij.")
-                || className.startsWith("org.jetbrains.")
+                || className.startsWith("org.xml.sax", 0)
+                || className.startsWith("com.intellij.", 0)
+                || className.startsWith("org.jetbrains.", 0)
+                || className.startsWith("org.junit.", 0)
+                || className.startsWith("junit.", 0)
                 || className.startsWith("org.jrts.", 0));
     }
 

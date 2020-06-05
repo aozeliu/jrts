@@ -22,7 +22,13 @@ public class MethodEnhancer extends AdviceAdapter {
     @Override
     protected void onMethodEnter() {
         super.onMethodEnter();
-        insertMonitorMethodOnBefore();
+        int access = getAccess();
+        // 非私有的静态方法
+        // 非私有的构造函数
+        if ((access & ACC_PRIVATE) == 0
+                && ((access & ACC_STATIC) != 0 || getName().equals("<init>"))) {
+            insertMonitorMethodOnBefore();
+        }
     }
 
     protected void loadThisOrPushNullIfIsStatic() {
@@ -39,7 +45,7 @@ public class MethodEnhancer extends AdviceAdapter {
 
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String descriptor, boolean isInterface) {
-        if(!Types.isArrayType(owner) && (opcode == INVOKEINTERFACE || opcode == INVOKEVIRTUAL)){
+        if(!Types.isArrayType(owner) && !Types.isIgnorableClass(Types.getClassnameFromInternalName(owner))&& (opcode == INVOKEINTERFACE || opcode == INVOKEVIRTUAL)){
             String ownerClassname = Types.getClassnameFromInternalName(owner);
             if(!Types.isIgnorableClass(ownerClassname)) {
                 insertMonitorMethodOnCallBefore(ownerClassname);
@@ -50,7 +56,11 @@ public class MethodEnhancer extends AdviceAdapter {
 
     @Override
     public void visitFieldInsn(int opcode, String owner, String name, String descriptor) {
-        if(Types.isClassType(descriptor) && (opcode == GETSTATIC || opcode == PUTSTATIC)){
+        if(Types.isClassType(descriptor) && (opcode == GETSTATIC /*|| opcode == PUTSTATIC*/)){
+            // 对于静态字段的访问，目前记录两个信息，
+            //          一个字段所在类的信息
+            //          一个是字段的定义信息
+            //          字段的实际类型和定义类型可能不相同
             String ownerClassname = Types.getClassnameFromInternalName(owner);
             String fieldClassname = Types.getClassnameFromDescriptor(descriptor);
             if(Types.isIgnorableClass(ownerClassname)){
@@ -66,6 +76,18 @@ public class MethodEnhancer extends AdviceAdapter {
         super.visitFieldInsn(opcode, owner, name, descriptor);
     }
 
+
+    @Override
+    public void visitLdcInsn(Object value) {
+        if(value instanceof Type){
+            Type type = (Type)value;
+            String className = type.getClassName();
+            if(!Types.isIgnorableClass(className) && type.getSort() == Type.OBJECT){
+                insertMonitorMethodOnCallBefore(className);
+            }
+        }
+        super.visitLdcInsn(value);
+    }
 
     private void insertMonitorMethodOnBefore(){
         try {
