@@ -1,5 +1,8 @@
 package org.jrts.monitor;
 
+
+import org.jrts.monitor.util.MonitorUtils;
+
 /**
  * 监控类，用于记录执行信息
  */
@@ -7,7 +10,7 @@ public class Monitor {
 
     private static MonitorHandler monitorHandler;
 
-    public static void init(final MonitorHandler handler) {
+    public static void init(MonitorHandler handler){
         monitorHandler = handler;
     }
 
@@ -17,7 +20,7 @@ public class Monitor {
                 monitorHandler.handleOnCallBefore(clazz);
             }
         } catch (Throwable cause) {
-            handleException(cause);
+            MonitorUtils.handleException(cause);
         }
     }
 
@@ -28,7 +31,7 @@ public class Monitor {
                 monitorHandler.handleOnBefore(methodClass, target);
             }
         } catch (Throwable cause) {
-            handleException(cause);
+            MonitorUtils.handleException(cause);
         }
     }
 
@@ -38,21 +41,7 @@ public class Monitor {
                 monitorHandler.handleOnStaticAccess(ownerClass, fieldClass);
             }
         } catch (Throwable cause) {
-            handleException(cause);
-        }
-    }
-
-    /**
-     * 是否在发生异常时主动对外抛出
-     * T:主动对外抛出，会中断方法
-     * F:不对外抛出，只将异常信息打印出来
-     */
-    public static volatile boolean isThrowException = false;
-    private static void handleException(Throwable cause) throws Throwable {
-        if (isThrowException) {
-            throw cause;
-        } else {
-            cause.printStackTrace();
+            MonitorUtils.handleException(cause);
         }
     }
 }

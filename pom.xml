@@ -11,6 +11,7 @@
         <module>monitor</module>
         <module>core</module>
         <module>agent</module>
+        <module>junit-agent</module>
     </modules>
     <packaging>pom</packaging>
 

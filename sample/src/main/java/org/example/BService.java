@@ -3,18 +3,18 @@ package org.example;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ServiceImpl extends BaseService {
+public class BService implements IService {
 
     String msg;
 
-    public ServiceImpl(String msg) {
+    public BService(String msg) {
         this.msg = msg;
-        log.info("constructor");
+        log.info("BService constructor");
     }
 
 
     @Override
     public void say() {
-        log.info(msg);
+        log.info(msg + " B");
     }
 }

@@ -1,39 +1,35 @@
 package org.jrts.core.handler;
 
-import org.jrts.core.hash.Hasher;
+import org.jrts.core.record.Recorder;
 import org.jrts.monitor.MonitorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-import java.net.URL;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 public class MonitorHandlerImpl implements MonitorHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(MonitorHandlerImpl.class);
 
-    private Hasher hasher;
-    private Map<String, String> hashes = new ConcurrentHashMap<>();
+    private Recorder recorder;
 
-    public MonitorHandlerImpl(Hasher hasher) {
-        this.hasher = hasher;
+
+    public MonitorHandlerImpl(Recorder recorder) {
+        this.recorder = recorder;
     }
 
     @Override
     public void handleOnCallBefore(Class clazz) throws Throwable {
-        String hash = getHash(clazz);
-        logger.info("handleOnCallBefore classname={} hashcode={}",
+        String hash = recorder.record(clazz);
+        logger.debug("handleOnCallBefore classname={} hashcode={}",
                 clazz.getName(), hash);
     }
 
     @Override
     public void handleOnBefore(Class methodClass, Object target) throws Throwable {
         Class targetClazz = target == null ? null : target.getClass();
-        String methodClassHash = getHash(methodClass);
-        String targetClassHash = getHash(targetClazz);
-        logger.info("handleOnBefore methodClassName={} hashcode={}, targetClassname={}, hashcode={}",
+        String methodClassHash = recorder.record(methodClass);
+        String targetClassHash = recorder.record(targetClazz);
+        logger.debug("handleOnBefore methodClassName={} hashcode={}, targetClassname={}, hashcode={}",
                 methodClass.getName(),
                 methodClassHash,
                 targetClazz == null ? "null" : targetClazz.getName(),
@@ -44,48 +40,14 @@ public class MonitorHandlerImpl implements MonitorHandler {
 
     @Override
     public void handleOnStaticAccess(Class ownerClass, Class fieldClass) throws Throwable {
-        String ownerClassHash = getHash(ownerClass);
-        String fieldClassHash = getHash(fieldClass);
-        logger.info("handleOnStaticAccess ownerClassName={} hashcode={}, fieldClassName={} hashcode={}",
+        String ownerClassHash = recorder.record(ownerClass);
+        String fieldClassHash = recorder.record(fieldClass);
+        logger.debug("handleOnStaticAccess ownerClassName={} hashcode={}, fieldClassName={} hashcode={}",
                 ownerClass == null ? "null" : ownerClass.getName(),
                 ownerClassHash,
                 fieldClass == null ? "null" : fieldClass.getName(),
                 fieldClassHash);
     }
 
-    public URL getUrlForClass(Class clazz){
-        String classname = clazz.getName();
-        int index = classname.lastIndexOf('.');
-        String fileName = clazz.getSimpleName();
-        if(index != -1){
-            fileName = classname.substring(index+1);
-        }
-        fileName = fileName.concat(".class");
-        return clazz.getResource(fileName);
-    }
 
-    public String getHash(Class clazz){
-        if(clazz == null){
-            return hasher.hash(null);
-        }
-        URL url = getUrlForClass(clazz);
-        if(url == null){
-            return hasher.hash(null);
-        }
-        String externalForm = url.toExternalForm();
-        String hash = hashes.get(externalForm);
-        if(hash == null) {
-            hash = hasher.hash(url);
-            hashes.put(externalForm, hash);
-        }
-        return hash;
-    }
-
-    public void beginMonitor(){
-        hashes.clear();
-    }
-
-    public Map<String, String> endMonitor(){
-        return hashes;
-    }
 }
