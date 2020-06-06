@@ -12,6 +12,7 @@ public class Types {
                 || className.startsWith("sun.", 0)
                 || className.startsWith("com.sun.", 0)
                 || className.startsWith("org.xml.sax", 0)
+                || className.startsWith("org.apache.maven.", 0)
                 || className.startsWith("com.intellij.", 0)
                 || className.startsWith("org.jetbrains.", 0)
                 || className.startsWith("org.junit.", 0)

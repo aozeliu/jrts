@@ -12,30 +12,32 @@
     <artifactId>agent</artifactId>
 
     <build>
-        <finalName>jrts-agent</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestFile>src/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>attached</goal>
+                            <goal>single</goal>
                         </goals>
                         <phase>package</phase>
                     </execution>
                 </executions>
 
                 <configuration>
-                    <descriptorRefs>jar-with-dependencies</descriptorRefs>
-                    <archive>
-                        <manifestEntries>
-                            <Premain-Class>org.jrts.agent.JRtsAgent</Premain-Class>
-                            <!--<Agent-Class>org.jrts.agent.JRtsAgent</Agent-Class>-->
-                            <Can-Redefine-Classes>true</Can-Redefine-Classes>
-                            <Can-Retransform-Classes>true</Can-Retransform-Classes>
-                        </manifestEntries>
-                    </archive>
+                    <descriptors>
+                        <descriptor>src/assembly/assembly.xml</descriptor>
+                    </descriptors>
                 </configuration>
             </plugin>
         </plugins>

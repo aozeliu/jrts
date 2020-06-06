@@ -8,6 +8,9 @@
     <artifactId>sample</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <properties>
+        <jrts.root.dir>${basedir}/../agent/target/agent-1.0-SNAPSHOT-release/agent-1.0-SNAPSHOT</jrts.root.dir>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -48,15 +51,19 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <!--<groups>-->
-                        <!--org.example.BTest-->
-                    <!--</groups>-->
-                </configuration>
+                <groupId>org.jrts</groupId>
+                <artifactId>jrts-maven-plugin</artifactId>
+                <version>1.0-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>select</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
+
     </build>
 
 </project>

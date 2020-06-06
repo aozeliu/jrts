@@ -1,0 +1,28 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
+
+    <id>release</id>
+    <formats>
+        <format>zip</format>
+        <format>dir</format>
+    </formats>
+    <includeBaseDirectory>true</includeBaseDirectory>
+    <files>
+        <file>
+            <source>${basedir.parent}/agent/target/agent-${version}.jar</source>
+            <outputDirectory>/</outputDirectory>
+            <destName>agent.jar</destName>
+        </file>
+        <file>
+            <source>${basedir.parent}/monitor/target/monitor-${version}.jar</source>
+            <outputDirectory>/</outputDirectory>
+            <destName>monitor.jar</destName>
+        </file>
+        <file>
+            <source>${basedir.parent}/core/target/core-${version}-jar-with-dependencies.jar</source>
+            <outputDirectory>/</outputDirectory>
+            <destName>core.jar</destName>
+        </file>
+    </files>
+
+</assembly>
