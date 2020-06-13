@@ -6,6 +6,7 @@ public class Types {
 
     public static boolean isIgnorableClass(String className) {
         return (className.contains("$Proxy")
+                || className.contains("CGLIB$")
                 || className.startsWith("java.", 0)
                 || className.startsWith("javax.", 0)
                 || className.startsWith("jdk.", 0)
@@ -13,9 +14,11 @@ public class Types {
                 || className.startsWith("com.sun.", 0)
                 || className.startsWith("org.xml.sax", 0)
                 || className.startsWith("org.apache.maven.", 0)
+                || className.startsWith("net.bytebuddy.", 0)
                 || className.startsWith("com.intellij.", 0)
                 || className.startsWith("org.jetbrains.", 0)
                 || className.startsWith("org.junit.", 0)
+                || className.startsWith("org.springframework.", 0)
                 || className.startsWith("junit.", 0)
                 || className.startsWith("org.jrts.", 0));
     }

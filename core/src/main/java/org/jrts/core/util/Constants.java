@@ -11,6 +11,6 @@ public class Constants {
 
     // 是否导出增强后的字节码
     public static final boolean DUMP_CLASS = false;
-    public static final String CLASS_DUMP_DIR_PATH = "./jrts/class-dump/";
+    public static final String CLASS_DUMP_DIR_PATH = ".jrts/class-dump/";
 
 }

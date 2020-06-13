@@ -12,8 +12,7 @@ public class EnhancerImpl implements Enhancer {
     @Override
     public byte[] transform(String classname, byte[] srcByteCodeArray) {
         ClassReader classReader = new ClassReader(srcByteCodeArray);
-        ClassWriter classWriter = new ClassWriter(classReader,
-                ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+        ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS);
         MonitorWeaver monitorWeaver = new MonitorWeaver(classname, classWriter);
         classReader.accept(monitorWeaver, ClassReader.EXPAND_FRAMES);
         return Utils.dumpIfNecessary(classReader.getClassName(), classWriter.toByteArray());

@@ -26,7 +26,7 @@ public class JUnit4MonitorHandlerImpl implements JUnit4MonitorHandler {
 
     @Override
     public int runBefore(Object runner) {
-        if(isBlockJUnit4ClassRunner(runner)){
+        if(isJUnit4ClassRunner(runner)){
             Class testClass = null;
             try {
                 testClass = getTestClass(runner);
@@ -46,7 +46,7 @@ public class JUnit4MonitorHandlerImpl implements JUnit4MonitorHandler {
 
     @Override
     public void runAfter(Object runner) {
-        if(isBlockJUnit4ClassRunner(runner)){
+        if(isJUnit4ClassRunner(runner)){
             Class testClass = null;
             try {
                 testClass = getTestClass(runner);
@@ -61,16 +61,28 @@ public class JUnit4MonitorHandlerImpl implements JUnit4MonitorHandler {
         }
     }
 
-    private boolean isBlockJUnit4ClassRunner(Object runner){
-        return runner.getClass().getName().equals("org.junit.runners.BlockJUnit4ClassRunner");
+    private boolean isJUnit4ClassRunner(Object runner){
+        return JUnit4Types.isJUnit4Runner(runner.getClass().getName());
     }
 
     private Class getTestClass(Object runner) throws Exception{
-        Field field = runner.getClass().getSuperclass().getDeclaredField("testClass");
+        Field field = getTestClassField(runner.getClass());
         field.setAccessible(true);
         Object testClass = field.get(runner);
         Field testField = testClass.getClass().getDeclaredField("clazz");
         testField.setAccessible(true);
         return (Class) testField.get(testClass);
+    }
+
+    private Field getTestClassField(Class clazz){
+        while (clazz != null) {
+            try {
+                Field field = clazz.getDeclaredField("testClass");
+                return field;
+            } catch (NoSuchFieldException e) {
+                clazz = clazz.getSuperclass();
+            }
+        }
+        return null;
     }
 }
