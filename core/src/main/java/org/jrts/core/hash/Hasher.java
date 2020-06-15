@@ -3,7 +3,10 @@ package org.jrts.core.hash;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.Adler32;
@@ -13,6 +16,19 @@ public class Hasher {
     protected static final String ERROR_HASH = "-1";
 
     private Map<String, String> cache = new ConcurrentHashMap<>();
+
+    public Map<String, String> hash(List<String> urls) {
+        HashMap<String, String> map = new HashMap<>();
+        for (String url : urls) {
+            try {
+                String hash = hash(new URL(url));
+                map.put(url, hash);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
+        return map;
+    }
 
     public String hash(URL url){
         if(url == null){

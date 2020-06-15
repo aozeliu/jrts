@@ -5,13 +5,15 @@ import org.jrts.core.store.Storer;
 import org.jrts.core.util.Constants;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Recorder {
 
-    private Map<String, String> hashes = new ConcurrentHashMap<>();
+    private Map<Class, Boolean> classes = new ConcurrentHashMap<>();
+    private Map<String, Boolean> urls = new ConcurrentHashMap<>();
     private Hasher hasher;
     private Storer storer;
 
@@ -20,22 +22,33 @@ public class Recorder {
         this.storer = storer;
     }
 
-    public String record(Class clazz){
-        if(clazz == null){
-            return hasher.hash(null);
+    public boolean record(File file){
+        try {
+            URL url = file.toURI().toURL();
+            return recordUrl(url.toExternalForm());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
         }
-        URL url = getUrlForClass(clazz);
-        if(url == null){
-            return hasher.hash(null);
-        }
-        String externalForm = url.toExternalForm();
-        String hash = hashes.get(externalForm);
-        if(hash == null) {
-            hash = hasher.hash(url);
-            hashes.put(externalForm, hash);
-        }
-        return hash;
+        return false;
     }
+
+    public boolean record(Class clazz){
+        if(clazz == null){
+            return false;
+        }
+
+        Boolean previous = classes.putIfAbsent(clazz, Boolean.TRUE);
+        if(previous != Boolean.TRUE) {
+            URL url = getUrlForClass(clazz);
+            if (url == null) {
+                return false;
+            }
+            String externalForm = url.toExternalForm();
+            return recordUrl(externalForm);
+        }
+        return false;
+    }
+
 
     private URL getUrlForClass(Class clazz){
         String classname = clazz.getName();
@@ -48,13 +61,25 @@ public class Recorder {
         return clazz.getResource(fileName);
     }
 
-    public void beforeTestRun(){
-        hashes.clear();
+    public List<String> getUrls(){
+        Set<String> keySet = urls.keySet();
+        return new ArrayList<>(keySet);
     }
 
-    public void afterTestRun(String test){
+    public void beforeTestRun(){
+        classes.clear();
+        urls.clear();
+    }
+
+
+    private boolean recordUrl(String url){
+        return urls.putIfAbsent(url, Boolean.TRUE) == Boolean.TRUE;
+    }
+
+    public void afterTestRunWithHashAndStore(String test){
+        List<String> urls = getUrls();
         storer.dump(
-                hashes,
+                hasher.hash(urls),
                 new File(
                         Constants.JRTS_DEFAULT_DATA_PATH,
                         test + Constants.DEPENDENCY_FILE_EXTENSION

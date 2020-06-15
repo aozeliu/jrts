@@ -31,7 +31,7 @@ public class SimpleJRts implements JRts{
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                recorder.afterTestRun(SimpleJRts.class.getName());
+                recorder.afterTestRunWithHashAndStore(SimpleJRts.class.getName());
             }
         });
     }

@@ -12,41 +12,36 @@ public class MonitorHandlerImpl implements MonitorHandler {
 
     private Recorder recorder;
 
-
     public MonitorHandlerImpl(Recorder recorder) {
         this.recorder = recorder;
     }
 
     @Override
     public void handleOnCallBefore(Class clazz) throws Throwable {
-        String hash = recorder.record(clazz);
-        logger.debug("handleOnCallBefore classname={} hashcode={}",
-                clazz.getName(), hash);
+        boolean isRecord = recorder.record(clazz);
+        logger.debug("handleOnCallBefore classname={} isRecord={}",
+                clazz.getName(), isRecord);
     }
 
     @Override
     public void handleOnBefore(Class methodClass, Object target) throws Throwable {
         Class targetClazz = target == null ? null : target.getClass();
-        String methodClassHash = recorder.record(methodClass);
-        String targetClassHash = recorder.record(targetClazz);
-        logger.debug("handleOnBefore methodClassName={} hashcode={}, targetClassname={}, hashcode={}",
-                methodClass.getName(),
-                methodClassHash,
-                targetClazz == null ? "null" : targetClazz.getName(),
-                targetClassHash
+        boolean isRecordOfMethod = recorder.record(methodClass);
+        boolean isRecordOfTarget = recorder.record(targetClazz);
+        logger.debug("handleOnBefore methodClassName={} isRecord={}, targetClassname={}, isRecord={}",
+                methodClass.getName(), isRecordOfMethod,
+                targetClazz == null ? "null" : targetClazz.getName(), isRecordOfTarget
         );
     }
 
 
     @Override
     public void handleOnStaticAccess(Class ownerClass, Class fieldClass) throws Throwable {
-        String ownerClassHash = recorder.record(ownerClass);
-        String fieldClassHash = recorder.record(fieldClass);
-        logger.debug("handleOnStaticAccess ownerClassName={} hashcode={}, fieldClassName={} hashcode={}",
-                ownerClass == null ? "null" : ownerClass.getName(),
-                ownerClassHash,
-                fieldClass == null ? "null" : fieldClass.getName(),
-                fieldClassHash);
+        boolean isRecordOfOwner = recorder.record(ownerClass);
+        boolean isRecordOfField = recorder.record(fieldClass);
+        logger.debug("handleOnStaticAccess ownerClassName={} isRecord={}, fieldClassName={} isRecord={}",
+                ownerClass == null ? "null" : ownerClass.getName(), isRecordOfOwner,
+                fieldClass == null ? "null" : fieldClass.getName(), isRecordOfField);
     }
 
 

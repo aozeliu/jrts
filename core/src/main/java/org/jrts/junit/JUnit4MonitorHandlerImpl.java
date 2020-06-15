@@ -53,7 +53,7 @@ public class JUnit4MonitorHandlerImpl implements JUnit4MonitorHandler {
                 String testClassName = testClass.getName();
                 Boolean isRun = runTests.remove(testClassName);
                 if(isRun != null && isRun) {
-                    recorder.afterTestRun(testClassName);
+                    recorder.afterTestRunWithHashAndStore(testClassName);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

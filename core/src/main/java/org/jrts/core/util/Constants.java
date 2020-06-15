@@ -13,4 +13,7 @@ public class Constants {
     public static final boolean DUMP_CLASS = false;
     public static final String CLASS_DUMP_DIR_PATH = ".jrts/class-dump/";
 
+
+    public static final String JRTS_CLASSLOADER_NAME = "org.jrts.agent.JRtsClassLoader";
+
 }
